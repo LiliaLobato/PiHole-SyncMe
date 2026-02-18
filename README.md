@@ -190,4 +190,4 @@ Note: This does absolutely nothing for privacy or blocking, it just takes out th
 <br><br>
 ---
 # Have fun! Be safe! Touch grass!
-![Teddy bear infront of a mountain](images/touchGrass.jpg)
+![Teddy bear infront of a mountain](images/TouchGrass.jpg)
