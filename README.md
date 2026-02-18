@@ -138,7 +138,7 @@ Have you ever search "music to study" on youtube in the past 6 months? Most of t
 
 <div style="text-align: center;">
 <img src="https://surasshu.com/wp-content/uploads/2025/01/image-2-1024x544.png" alt="Screenshot of youtube showing a playlist of AI music (& with AI art), and all but one recommended video is also AI generated. Author: sarasshu" width="500"/>
-<figcaption>><br>Screenshot of youtube showing a playlist of AI music (& with AI art), and all but one recommended video is also AI generated. Image Author: sarasshu</figcaption>
+<figcaption><br>Screenshot of youtube showing a playlist of AI music (& with AI art), and all but one recommended video is also AI generated. Image Author: sarasshu</figcaption>
 </div>
 
 - Extension: [Blocktube](https://chromewebstore.google.com/detail/blocktube/bbeaicapbccfllodepmimpkgecanonai)
@@ -190,4 +190,4 @@ Note: This does absolutely nothing for privacy or blocking, it just takes out th
 <br><br>
 ---
 # Have fun! Be safe! Touch grass!
-![Signs tin foil hat scene](images/touchGrass.jpg)
+![Teddy bear infront of a mountain](images/touchGrass.jpg)
