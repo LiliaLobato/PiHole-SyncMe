@@ -79,7 +79,7 @@ Just go into any ad/tracker heavy page,
 It should look like this:
 <div style="text-align: center;">
 <img src="images/fuzzThePiGuy.png" alt="PiHole test passing the visual inspection on an ad/tracker heavy page" width="600"/>
-<figcaption>You dont have your PiHole setup yet? Try test 3 and see the difference. :skull: </figcaption>
+<figcaption><br>You dont have your PiHole setup yet? Try test 3 and see the difference. :skull: </figcaption>
 </div>
 
 If you see them, something is wrong. It could be a dns leak somewhere in your network:
@@ -94,7 +94,7 @@ Or you just need better lists:
 I been in a digital detox journey, this are cool things to add to your setup!
 
 ## Browser and search engine
-If you dont wanna do the big browser jump, just switch your search engine to [DuckDuckGo](https://duckduckgo.com/)
+<mark style="background: #8ddadaa6;">If you dont wanna do the big browser jump:<mark> just switch your search engine to [DuckDuckGo](https://duckduckgo.com/)
 
 Both browser options are avilable for web and mobile and do your own research. 
 I run 2 browsers: DuckDuckGo and Firefox.
@@ -125,9 +125,8 @@ Have you ever search "music to study" on youtube in the past 6 months? Most of t
 - Basic block list: [blocklist for AI music on youtube – surasshu](https://surasshu.com/blocktube_backup--AI%20music%20blocklist--updated%20August%202025.json)
 
 ### UnTrap
-Im trying to consume less short term content and be mindfull of my mindless scrolling.
-
-- If you are not ready for the big youtube in browser jump, install [ScreenZen](https://screenzen.co/) to block youtube shorts on the app.
+Im trying to consume less short term content and be mindfull of my mindless scrolling.<br>
+<mark style="background: #8ddadaa6;">If you are not ready for the big youtube in browser jump:</mark> install [ScreenZen](https://screenzen.co/) to block youtube shorts on the app.
 - For your browser, checkout [UnTrap](https://untrap.app/), it allows you to disable shorts, infinite scroll and personalize the layout.
 - Extension: [UnTrap](https://chromewebstore.google.com/detail/untrap-%E2%80%93-eliminar-youtube/enboaomnljigfhfjfoalacienlhjlfil)
 
@@ -150,7 +149,7 @@ More information:
 
 
 ## What can I do?
-Non negotiable:
+<mark style="background: #8ddadaa6;">Non negotiable:</mark>
 - Go to the configuration, navigate to the Privacy or Data Collection sections and opt out of anything you can.
 - Opt out of personalized advertising and data sharing agreements in the privacy menu.
 - Turn off voice recognition or voice control features. Specially if you do not use them.
@@ -160,7 +159,7 @@ Setup network level protecton:
 - Some [devices have hardcoded DNS](https://github.com/buckmelanoma/hardcoded-dns-list/blob/master/list.csv) to avoid DNS based blocking: Google cast, Google Home, Amazon Alexa, Vizio TVs, Google Pixel, Netflix on Android, Roku, Ring Doorbell, etc. You need to  redirect any port 53 packets to the pihole but some device will simply refuse to work... pick your battles and keep it in mind when buying your products.
     - Your router setup will be different but you can use this as a guide: [Redirect Hard-coded DNS To Pi-hole Using Ubiquiti EdgeRouter](https://www.derekseaman.com/2019/10/redirect-hard-coded-dns-to-pi-hole-using-ubiquiti-edgerouter.html)
 
-Skip the defualt launcher:
+Skip the default launcher:
 - If you have an Android TV, change the default launcher to [Projectivy Launcher](https://play.google.com/store/apps/details?id=com.spocky.projengmenu&hl=en-US) or sideload it. <br>
 Note: This does absolutely nothing for privacy or blocking, it just takes out the big distracting launcher.
 
