@@ -32,10 +32,14 @@ I will be updating as I discover new tools after adoption and testing.
 ## What pubic blocklist do I consume?
 Do you own research before adding anything to your setup and remember to periodically update Gravity.
 
-Base
+<details open> <summary>Base</summary>
+
 - https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts 
 
-Tracking & Telemetry Lists
+</details>
+
+<details> <summary>Tracking & Telemetry Lists</summary>
+
 - https://v.firebog.net/hosts/Easyprivacy.txt
 - https://v.firebog.net/hosts/Prigent-Ads.txt
 - https://perflyst.github.io/PiHoleBlocklist/SessionReplay.txt
@@ -45,29 +49,46 @@ Tracking & Telemetry Lists
 - https://raw.githubusercontent.com/Isaaker/Spotify-AdsList/main/Lists/pi-hole.txt // Disclaimer: I pay for the service, this blocks trackers and needs a some whitelisting
 - https://raw.githubusercontent.com/nickspaargaren/no-amazon/refs/heads/master/amazon.txt // Bye bye Amazon, needs some whitelisting for day to day use
 
-Smart Tv trackers
+</details>
+
+<details> <summary>Smart Tv trackers</summary>
+
 - https://perflyst.github.io/PiHoleBlocklist/SmartTV.txt
 - https://perflyst.github.io/PiHoleBlocklist/AmazonFireTV.txt // Needs some whitelisting to not block boot sequence
 - https://raw.githubusercontent.com/nocturnalarchives/BlockLists/refs/heads/master/amazon-firestick-updates.txt
 
-Advertising Lists
+</details>
+
+<details> <summary>Advertising Lists</summary>
+
 - https://adaway.org/hosts.txt
 - https://v.firebog.net/hosts/AdguardDNS.txt
 
-AntiMalware & Spam
+</details>
+
+<details> <summary>AntiMalware & Spam</summary>
+
 - https://raw.githubusercontent.com/PolishFiltersTeam/KADhosts/master/KADhosts.txt
 - https://raw.githubusercontent.com/FadeMind/hosts.extras/master/add.Spam/hosts
 - https://raw.githubusercontent.com/DandelionSprout/adfilt/master/Alternate%20versions%20Anti-Malware%20List/AntiMalwareHosts.txt
 - https://v.firebog.net/hosts/Prigent-Crypto.txt
 - https://raw.githubusercontent.com/anudeepND/blacklist/master/CoinMiner.txt
 
-Phishing
+</details>
+
+<details> <summary>Phishing</summary>
+
 - https://phishing.army/download/phishing_army_blocklist_extended.txt
 - https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews/hosts
 - http://sbc.io/hosts/alternates/gambling-only/hosts
 
-AI
+</details>
+
+<details> <summary>AI</summary>
+
 - https://raw.githubusercontent.com/laylavish/uBlockOrigin-HUGE-AI-Blocklist/main/noai_hosts.txt
+
+</details>
 
 ## Test your setup
 Just go into any ad/tracker heavy page, 
@@ -117,7 +138,7 @@ Have you ever search "music to study" on youtube in the past 6 months? Most of t
 
 <div style="text-align: center;">
 <img src="https://surasshu.com/wp-content/uploads/2025/01/image-2-1024x544.png" alt="Screenshot of youtube showing a playlist of AI music (& with AI art), and all but one recommended video is also AI generated. Author: sarasshu" width="500"/>
-<figcaption>Screenshot of youtube showing a playlist of AI music (& with AI art), and all but one recommended video is also AI generated.<br>Author: sarasshu</figcaption>
+<figcaption>><br>Screenshot of youtube showing a playlist of AI music (& with AI art), and all but one recommended video is also AI generated. Image Author: sarasshu</figcaption>
 </div>
 
 - Extension: [Blocktube](https://chromewebstore.google.com/detail/blocktube/bbeaicapbccfllodepmimpkgecanonai)
