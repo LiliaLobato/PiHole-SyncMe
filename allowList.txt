@@ -1,0 +1,80 @@
+# ===============================================================
+# Host file for my allow list
+# Updated as needed from my traffic and needs
+# If you (dont know why) use this list, please complement from:
+# https://firebog.net/
+#
+# Title: PiHole-SyncMe
+# Last Update: 17/02/2026
+# ===============================================================
+
+# Google
+android.clients.google.com
+gstaticadssl.l.google.com
+clients4.google.com
+clients3.google.com
+clients2.google.com
+youtubei.googleapis.com
+people-pa.googleapis.com
+firestore.googleapis.com
+reminders-pa.googleapis.com
+^((alt)[0-9](-))?mtalk\.google\.com$
+
+# Amazon
+api.amazon.com
+images-na.ssl-images-amazon.com
+m.media-amazon.com
+
+# Amazon boot fireTv
+fireoscaptiveportal.com
+firetvcaptiveportal.com
+www.amazon.com
+
+# Smart Tv
+redirector.gvt1.com
+
+# Apple ios
+captive.apple.com
+cdn2.smoot.apple.com
+gsp-ssl.ls-apple.com.akadns.net
+gsp-ssl.ls.apple.com
+itunes.apple.com
+s.mzstatic.com
+
+# Spotify
+apresolve.spotify.com
+open.spotify.com
+pickasso.spotifycdn.com
+spclient.wg.spotify.com
+shared.akamai.steamstatic.com
+^(login\d+|api(-partner)?)\.spotify\.com$
+^(mosaic|seektables|cast)\.scdn\.co$
+^(spclient|partners)\.wg\.spotify\.com$
+^audio\d*(-[a-z]{2})?\.scdn\.co$
+^audio\d*(-[a-z]{2})?\.spotifycdn\.com$
+^gew1-spclient\.spotify\.com/(melody|connect-state|gabo-receiver-service|track-playback|storage-resolve|widevine-license)
+^gew[14]-spclient\.spotify\.com$
+api.spotify.com^$xhr
+
+# Reddit
+styles.redditmedia.com
+www.redditstatic.com
+reddit.map.fastly.net
+
+# Youtube
+s.youtube.com
+oauthaccountmanager.googleapis.com
+
+# Facebook
+scontent.xx.fbcdn.net
+star-mini.c10r.facebook.com
+star.c10r.facebook.com
+static.xx.fbcdn.net
+
+# General
+improving.duckduckgo.com
+
+# Connectivity Check & Captive Portal
+# If blocked, device think is offline
+connectivitycheck.android.com
+connectivitycheck.gstatic.com

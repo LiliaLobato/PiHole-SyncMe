@@ -1,0 +1,41 @@
+# ===============================================================
+# Host file for my block list
+# Updated as needed from my traffic and needs
+# If you (dont know why) use this list, please complement from:
+# https://firebog.net/
+#
+# Title: PiHole-SyncMe
+# Last Update: 17/02/2026
+# ===============================================================
+
+# Smart Tv
+akam.daps.nbcuni.com
+csm-e-cenbcausw1vpr416-047ad85c3e595470b.bln1.yospace.com
+(\.|^)tvinteractive\.tv$
+
+# Facebook
+bigzipfiles.facebook.com
+cdn.fbsbx.com
+creative.ak.fbcdn.net
+fb.me
+fbcdn-creative-a.akamaihd.net
+portal.fb.com
+rupload.facebook.com
+(video|external)(-[a-z]{3}\d{1,2})?-1\.\w{2}\.fbcdn\.net
+^(b-)?graph\.facebook\.com$
+^(edge-)?mqtt(\.[a-z0-9]+)?\.facebook\.com$
+^(edge-chat|l)\.messenger\.com$
+
+# Amazon updates
+d1s31zyz7dcc2d.cloudfront.net
+(\.|^)(softwareupdates|updates)\.amazon\.com$
+(\.|^)amz(digital)?(-a)?\.akamaihd\.net$|(\.|^)amzdigitaldownloads\.edgesuite\.net$
+
+# Hulu Disney+
+t2.hulu.com
+(\.|^)vod-hulu-ftc-na\.media\.dssott\.com$
+diproton-ads-[^\.]*\.hulu\.com\.akadns\.net
+
+# General
+tracking.epicgames.com
+(\.|^)turo\.hrzn-nxt\.com$
