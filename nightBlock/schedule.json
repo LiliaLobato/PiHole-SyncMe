@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "timezone": "America/Los_Angeles",
+  "days": {
+    "monday":    { "block": "22:00", "unblock": "07:00" },
+    "tuesday":   { "block": "22:00", "unblock": "07:00" },
+    "wednesday": { "block": "22:00", "unblock": "07:00" },
+    "thursday":  { "block": "22:00", "unblock": "07:00" },
+    "friday":    { "block": "23:00", "unblock": "08:00" },
+    "saturday":  { "block": "23:00", "unblock": "08:00" },
+    "sunday":    { "block": "22:00", "unblock": "07:00" }
+  }
+}
