@@ -73,6 +73,15 @@ def now_in_cfg_tz(cfg, override=None):
     return datetime.now(tz)
 
 
+def rows_from_json(out):
+    """Parse `pihole-FTL sqlite3 -json` output into positional string tuples.
+    Robust to any characters in domains/regex; empty result -> []."""
+    out = out.strip()
+    if not out:
+        return []
+    return [tuple(str(v) for v in row.values()) for row in json.loads(out)]
+
+
 # ---------------------------------------------------------------------------
 # DB layer - engine 'ftl' (prod) or 'python' (test). Same query API for both.
 # ---------------------------------------------------------------------------
@@ -106,9 +115,9 @@ class DB:
             return [tuple(str(c) for c in row) for row in cur.fetchall()]
         rendered = self._render(sql, params)
         out = subprocess.run(
-            ["pihole-FTL", "sqlite3", "-separator", "\x1e", self.path, rendered],
+            ["pihole-FTL", "sqlite3", "-json", self.path, rendered],
             capture_output=True, text=True, check=True).stdout
-        return [tuple(l.split("\x1e")) for l in out.splitlines()] if out.strip() else []
+        return rows_from_json(out)
 
     def execute(self, sql, params=()):
         if self.dry_run:
