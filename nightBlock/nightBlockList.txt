@@ -1,0 +1,25 @@
+# ==========================================================
+# Night curfew list - blocked overnight (see schedule.json)
+# One entry per line. '#' = comment.
+#   - exact FQDN            -> exact deny   (e.g. www.instagram.com)
+#   - contains regex chars  -> regex deny   (^ $ | ? * + ( ) [ ] { } \)
+#   - force regex with      -> re:<pattern>
+# Bare '.' and '-' do NOT make a line a regex.
+# Start SMALL while testing, then expand.
+# ==========================================================
+
+# --- Social / doomscroll ---
+(\.|^)instagram\.com$
+(\.|^)reddit\.com$
+(\.|^)tiktok\.com$
+(\.|^)facebook\.com$
+(\.|^)fb\.com$
+(\.|^)pinterest\.com$
+
+# --- Media ---
+(\.|^)youtube\.com$
+(\.|^)hulu\.com$
+
+# --- Shopping ---
+(\.|^)aliexpress\.com$
+(\.|^)shein\.com$
