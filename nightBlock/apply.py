@@ -12,11 +12,13 @@ Usage:
                                   sudo python3 apply.py --force-off
   Offline dry-run (laptop):       python3 apply.py --engine python --db gravity-copy.db --dry-run
   Simulate a time:                python3 apply.py --now "2026-07-10 23:30" --dry-run --engine python --db copy.db
+  Snooze curfew until morning:    sudo python3 apply.py --snooze
+  Cancel a snooze early:          sudo python3 apply.py --resume
 
 Idempotent & self-healing: desired state is recomputed from scratch each run.
 """
-import argparse, json, re, sqlite3, subprocess, sys
-from datetime import datetime
+import argparse, json, os, re, sqlite3, subprocess, sys
+from datetime import datetime, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -25,6 +27,9 @@ REPO_ROOT  = HERE.parent                               # .../PiHole-SyncMe
 TAG        = "[NightCurfew]"
 DEFAULT_DB = "/etc/pihole/gravity.db"
 REGEX_HINT = re.compile(r"[\^$|?*+()\[\]{}\\]")        # bare . and - are NOT regex
+# Persistent snooze marker (fixed path so cron + manual runs agree; override for tests)
+SNOOZE_FILE = Path(os.environ.get("NIGHTCURFEW_SNOOZE_FILE",
+                                  "/opt/pihole-nightcurfew/snooze_until"))
 
 
 # ---------------------------------------------------------------------------
@@ -71,6 +76,42 @@ def now_in_cfg_tz(cfg, override=None):
     if override:
         return datetime.strptime(override, "%Y-%m-%d %H:%M").replace(tzinfo=tz)
     return datetime.now(tz)
+
+
+def next_falling_edge(cfg, now):
+    """First datetime > now where the schedule goes ON->OFF (end of the
+    current/upcoming block window). Used as the snooze auto-expiry so a snooze
+    lasts until the curfew would naturally lift, then normal service resumes."""
+    prev = state_at(cfg, now)
+    t = now
+    for _ in range(8 * 24 * 60):            # scan up to 8 days at 1-min steps
+        t += timedelta(minutes=1)
+        cur = state_at(cfg, t)
+        if prev and not cur:
+            return t.replace(second=0, microsecond=0)
+        prev = cur
+    return now + timedelta(hours=24)        # fallback (e.g. curfew fully disabled)
+
+
+# --- snooze marker persistence (filesystem) ---
+def read_snooze():
+    """Return the aware expiry datetime, or None if no/invalid snooze."""
+    try:
+        return datetime.fromisoformat(SNOOZE_FILE.read_text().strip())
+    except (FileNotFoundError, ValueError):
+        return None
+
+
+def write_snooze(expiry):
+    SNOOZE_FILE.parent.mkdir(parents=True, exist_ok=True)
+    SNOOZE_FILE.write_text(expiry.isoformat())
+
+
+def clear_snooze():
+    try:
+        SNOOZE_FILE.unlink()
+    except FileNotFoundError:
+        pass
 
 
 def rows_from_json(out):
@@ -201,25 +242,56 @@ def main():
     ap.add_argument("--force-off", action="store_true", help="ignore schedule, force curfew OFF")
     ap.add_argument("--now", metavar="'YYYY-MM-DD HH:MM'", help="simulate this local time")
     ap.add_argument("--no-pull", action="store_true", help="skip git pull")
+    ap.add_argument("--snooze", action="store_true",
+                    help="disable the curfew until it would next lift (auto-resumes tomorrow)")
+    ap.add_argument("--resume", action="store_true", help="cancel an active snooze now")
     args = ap.parse_args()
     if args.force_on and args.force_off:
         raise SystemExit("--force-on and --force-off are mutually exclusive")
+    if args.snooze and args.resume:
+        raise SystemExit("--snooze and --resume are mutually exclusive")
 
     if args.engine == "ftl" and not args.no_pull and not args.dry_run:
         git_pull()
 
     cfg = json.loads((HERE / "schedule.json").read_text(encoding="utf-8"))
     entries = parse_list(HERE / "nightBlockList.txt")
+    now = now_in_cfg_tz(cfg, args.now)
 
+    # --- snooze / resume actions ---
+    if args.resume:
+        if not args.dry_run:
+            clear_snooze()
+        print("  snooze cleared - back on the normal schedule")
+    if args.snooze:
+        expiry = next_falling_edge(cfg, now)
+        if not args.dry_run:
+            write_snooze(expiry)
+        print(f"  snoozed - curfew OFF until {expiry:%a %Y-%m-%d %H:%M %Z}")
+
+    # --- decide desired state ---
+    snooze_note = ""
     if args.force_on:
         on = True
     elif args.force_off:
         on = False
+    elif args.snooze:
+        on = False
     else:
-        on = state_at(cfg, now_in_cfg_tz(cfg, args.now))
+        expiry = read_snooze()
+        if expiry and now < expiry:
+            on = False
+            snooze_note = f" (snoozed until {expiry:%a %H:%M})"
+        else:
+            if expiry:                       # expired -> auto-resume
+                if not args.dry_run:
+                    clear_snooze()
+                snooze_note = " (snooze expired -> resumed)"
+            on = state_at(cfg, now)
 
     print(f"[{datetime.now().isoformat(timespec='seconds')}] engine={args.engine} "
-          f"dry_run={args.dry_run} curfew={'ON' if on else 'OFF'} domains={len(entries)}")
+          f"dry_run={args.dry_run} curfew={'ON' if on else 'OFF'}{snooze_note} "
+          f"domains={len(entries)}")
 
     db = DB(args.engine, args.db, args.dry_run)
     changed = reconcile(db, entries, args.dry_run)

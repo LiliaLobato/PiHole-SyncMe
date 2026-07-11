@@ -9,24 +9,17 @@
 # ==========================================================
 
 # --- Social / doomscroll ---
-instagram.com
-www.instagram.com
-reddit.com
-www.reddit.com
+(\.|^)instagram\.com$
+(\.|^)reddit\.com$
 (\.|^)tiktok\.com$
-
-# --- Late-night rabbit holes ---
-youtube.com
-www.youtube.com
-hulu.com
-www.hulu.com
-
-# --- Shopping / impulse buys ---
-# regex form catches every subdomain incl. mobile (m.*) — matters for phones
-(\.|^)aliexpress\.com$
-(\.|^)shein\.com$
-
-# --- Social (more) ---
 (\.|^)facebook\.com$
+(\.|^)fb\.com$
 (\.|^)pinterest\.com$
 
+# --- Media ---
+(\.|^)youtube\.com$
+(\.|^)hulu\.com$
+
+# --- Shopping ---
+(\.|^)aliexpress\.com$
+(\.|^)shein\.com$

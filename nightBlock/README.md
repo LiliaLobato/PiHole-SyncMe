@@ -24,6 +24,13 @@ Changes take effect on the Pi within one cron tick (10 min).
 
 Idempotent & self-healing (survives reboots; re-asserts correct state every tick). "When" (the toggle) is decoupled from "who" (group), so scoping to specific devices later needs no code change — just move the rows to a custom group + assign clients.
 
+## Snooze (need the blocked sites tonight)
+```bash
+sudo python3 apply.py --snooze    # curfew OFF until it would next lift; auto-resumes tomorrow night
+sudo python3 apply.py --resume    # cancel the snooze right now
+```
+`--snooze` writes `/opt/pihole-nightcurfew/snooze_until` (a timestamp = the next morning the curfew would lift). Every cron tick honors it — so the curfew stays **off for the rest of tonight** and comes back **on its normal schedule tomorrow**, no manual step needed. `--resume` deletes the marker. `--force-on`/`--force-off` ignore snooze (manual test overrides). From the laptop, `GeneralScripts/PiHoleCurfew.ps1` runs these over SSH.
+
 ## Testing (no live Pi needed for logic)
 ```bash
 # 1) pure logic (schedule math + parsing) — laptop
@@ -41,7 +48,7 @@ sudo python3 apply.py --force-off   # laptop: nslookup www.instagram.com 10.0.0.
 
 ## Flags
 `--engine ftl|python` (default `ftl` = Pi-hole's `pihole-FTL sqlite3`; `python` = stdlib sqlite3, **test only**) ·
-`--db PATH` · `--dry-run` · `--force-on` · `--force-off` · `--now "YYYY-MM-DD HH:MM"` · `--no-pull`
+`--db PATH` · `--dry-run` · `--force-on` · `--force-off` · `--snooze` · `--resume` · `--now "YYYY-MM-DD HH:MM"` · `--no-pull`
 
 ## Install on the Pi
 `bash install.sh` — clones to `/opt/pihole-nightcurfew`, backs up `gravity.db`, and prints the test + cron-enable commands. It does **not** schedule anything until you enable cron yourself.

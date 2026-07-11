@@ -4,7 +4,7 @@ Run:  python test_schedule.py
 Covers the overnight-window schedule math and list parsing - where real bugs live."""
 from datetime import datetime
 from zoneinfo import ZoneInfo
-from apply import state_at, parse_lines
+from apply import state_at, parse_lines, next_falling_edge
 
 TZ = ZoneInfo("America/Los_Angeles")
 CFG = {
@@ -49,6 +49,14 @@ check("Wed null 23:00 -> OFF",            state_at(NCFG, dt(2026,7,8,23,0)), Fal
 
 # --- global kill switch ---
 check("enabled=false -> OFF",             state_at({**CFG, "enabled": False}, dt(2026,7,6,23,0)), False)
+
+# --- snooze auto-expiry = next ON->OFF edge (end of the block window) ---
+check("snooze at Mon 23:00 -> expires Tue 07:00",
+      next_falling_edge(CFG, dt(2026,7,6,23,0)),  dt(2026,7,7,7,0))
+check("snooze at Mon 12:00 (daytime) -> expires Tue 07:00 (suppress tonight)",
+      next_falling_edge(CFG, dt(2026,7,6,12,0)),  dt(2026,7,7,7,0))
+check("snooze at Fri 23:45 -> expires Sat 08:00 (per-day unblock)",
+      next_falling_edge(CFG, dt(2026,7,10,23,45)), dt(2026,7,11,8,0))
 
 # --- list parsing ---
 p = parse_lines("# comment\nwww.reddit.com\n(\\.|^)tiktok\\.com$\nre:foo\\.bar\n\n")
