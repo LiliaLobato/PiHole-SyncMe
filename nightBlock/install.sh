@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# PiHole AutoBlocker - one-time Pi setup. Does NOT enable cron (test first!).
+# PiHole AutoBlocker - one-time Pi setup: clone, gravity.db backup, logrotate.
+# Does NOT enable cron (test first!).
 set -euo pipefail
 
 BASE=/opt/pihole-nightcurfew
@@ -20,6 +21,17 @@ sudo git config --global --add safe.directory "$REPO"
 
 echo "==> backing up gravity.db (consistent copy via .backup)"
 sudo pihole-FTL sqlite3 /etc/pihole/gravity.db ".backup /etc/pihole/gravity.db.bak-$(date +%F)"
+
+echo "==> installing logrotate rule (caps /var/log/pihole-nightcurfew.log at ~1.3MB)"
+printf '%s\n' \
+  '/var/log/pihole-nightcurfew.log {' \
+  '    size 1M' \
+  '    rotate 3' \
+  '    compress' \
+  '    missingok' \
+  '    notifempty' \
+  '    create 0644 root root' \
+  '}' | sudo tee /etc/logrotate.d/pihole-nightcurfew >/dev/null
 
 cat <<EOF
 
