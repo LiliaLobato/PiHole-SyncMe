@@ -17,7 +17,7 @@ Usage:
 
 Idempotent & self-healing: desired state is recomputed from scratch each run.
 """
-import argparse, json, os, re, sqlite3, subprocess, sys
+import argparse, json, os, re, shutil, sqlite3, subprocess, sys
 from datetime import datetime, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -223,6 +223,16 @@ def apply_state(db, on):
     return False
 
 
+def pihole_bin():
+    """Resolve the `pihole` wrapper's absolute path. Cron runs with a minimal
+    PATH (typically /usr/bin:/bin) that omits /usr/local/bin, where the wrapper
+    lives - a bare 'pihole' then fails with FileNotFoundError. Fall back to the
+    known install locations so the reload works from cron too."""
+    return (shutil.which("pihole")
+            or next((p for p in ("/usr/local/bin/pihole", "/usr/bin/pihole")
+                     if os.path.exists(p)), "pihole"))
+
+
 def git_pull():
     try:
         subprocess.run(["git", "-C", str(REPO_ROOT), "pull", "--ff-only", "--quiet"],
@@ -300,8 +310,16 @@ def main():
 
     if changed:
         if args.engine == "ftl" and not args.dry_run:
-            subprocess.run(["pihole", "reloadlists"], check=False)
-            print("  ran: pihole reloadlists")
+            # Must never crash after the DB was already changed, or FTL is left
+            # stale (DB says disabled but blocking stays live until a manual
+            # reload). check=False ignores exit codes; the try/except covers a
+            # missing/unexecutable binary (FileNotFoundError etc.).
+            try:
+                subprocess.run([pihole_bin(), "reloadlists"], check=False)
+                print("  ran: pihole reloadlists")
+            except OSError as e:
+                print(f"WARN reloadlists failed: {e} - FTL NOT refreshed; "
+                      "DB and live state may diverge", file=sys.stderr)
         else:
             print("  (reload skipped - dry-run or python engine)")
     else:
