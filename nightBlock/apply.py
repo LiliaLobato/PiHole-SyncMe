@@ -17,7 +17,7 @@ Usage:
 
 Idempotent & self-healing: desired state is recomputed from scratch each run.
 """
-import argparse, json, os, re, shutil, sqlite3, subprocess, sys
+import argparse, json, os, re, shutil, sqlite3, subprocess, sys, time
 from datetime import datetime, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -149,15 +149,32 @@ class DB:
             out += self._lit(p) + tail
         return out
 
+    @staticmethod
+    def _ftl(cmd):
+        """Run a `pihole-FTL sqlite3` command, retrying on 'database is locked'.
+        FTL keeps gravity.db open, so a bare no-wait connection collides with
+        FTL's own writes (and the every-10-min cron). Each invocation is its own
+        process/connection, so we retry with backoff instead of relying on a
+        single busy_timeout. Returns stdout; raises CalledProcessError otherwise."""
+        delay, r = 0.4, None
+        for _ in range(7):
+            r = subprocess.run(cmd, capture_output=True, text=True)
+            if r.returncode == 0:
+                return r.stdout
+            if "database is locked" in ((r.stderr or "") + (r.stdout or "")).lower():
+                time.sleep(delay)
+                delay = min(delay * 2, 5)
+                continue
+            break
+        raise subprocess.CalledProcessError(r.returncode, cmd, r.stdout, r.stderr)
+
     def query(self, sql, params=()):
         """Reads always run (harmless), even in dry-run."""
         if self.engine == "python":
             cur = self.conn.execute(sql, params)
             return [tuple(str(c) for c in row) for row in cur.fetchall()]
         rendered = self._render(sql, params)
-        out = subprocess.run(
-            ["pihole-FTL", "sqlite3", "-json", self.path, rendered],
-            capture_output=True, text=True, check=True).stdout
+        out = self._ftl(["pihole-FTL", "sqlite3", "-json", self.path, rendered])
         return rows_from_json(out)
 
     def execute(self, sql, params=()):
@@ -167,8 +184,11 @@ class DB:
         if self.engine == "python":
             self.conn.execute(sql, params)
         else:
-            subprocess.run(["pihole-FTL", "sqlite3", self.path, self._render(sql, params)],
-                           check=True)
+            # PRAGMA busy_timeout makes SQLite itself wait for the lock (wakes the
+            # instant it frees); the _ftl retry loop is the outer safety net.
+            # Output is unused for writes, so the PRAGMA's row can't corrupt a parse.
+            rendered = "PRAGMA busy_timeout=15000; " + self._render(sql, params)
+            self._ftl(["pihole-FTL", "sqlite3", self.path, rendered])
 
     def commit(self):
         if self.engine == "python" and not self.dry_run:
@@ -207,6 +227,23 @@ def reconcile(db, entries, dry_run):
             print(f"  - remove {dom}")
             db.execute("DELETE FROM domainlist_by_group WHERE domainlist_id = ?;", (rid,))
             db.execute("DELETE FROM domainlist WHERE id = ?;", (rid,))
+            changed = True
+
+    # Heal any [NightCurfew] row missing its Default-group (0) link. Adding a
+    # domain row and linking it are two separate statements; a run aborted
+    # between them (e.g. on a DB lock) leaves a row that exists but never
+    # blocks, and the add-branch above would never revisit it. This makes the
+    # link idempotent and self-healing. Normally finds nothing.
+    if not dry_run:
+        orphans = db.query(
+            "SELECT d.id FROM domainlist d "
+            "LEFT JOIN domainlist_by_group g "
+            "ON g.domainlist_id = d.id AND g.group_id = 0 "
+            "WHERE d.comment = ? AND g.domainlist_id IS NULL;", (TAG,))
+        for (rid,) in orphans:
+            print(f"  + link orphaned id {rid} -> Default group (0)")
+            db.execute("INSERT OR IGNORE INTO domainlist_by_group (domainlist_id, group_id) "
+                       "VALUES (?, 0);", (int(rid),))
             changed = True
     return changed
 
