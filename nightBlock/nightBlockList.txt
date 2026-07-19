@@ -5,7 +5,12 @@
 #   - contains regex chars  -> regex deny   (^ $ | ? * + ( ) [ ] { } \)
 #   - force regex with      -> re:<pattern>
 # Bare '.' and '-' do NOT make a line a regex.
-# Start SMALL while testing, then expand.
+#
+# NOTE on apps vs browsers: a website (e.g. youtube.com) is only the
+# front door. The mobile APP usually talks to a different API host and
+# streams media from a CDN, so blocking just the ".com" stops the
+# browser but not the app. Each service below lists the app/CDN hosts
+# too. See the plan doc for the DoH/Private Relay caveat.
 # ==========================================================
 
 # --- Social / doomscroll ---
@@ -16,9 +21,41 @@
 (\.|^)fb\.com$
 (\.|^)pinterest\.com$
 
-# --- Media ---
+# --- YouTube (web + iPad/phone app) ---
 (\.|^)youtube\.com$
+(\.|^)youtu\.be$
+(\.|^)youtube-nocookie\.com$
+(\.|^)youtubekids\.com$
+# app API endpoint - THIS is what the iPad/phone app hits (not youtube.com)
+(\.|^)youtubei\.googleapis\.com$
+# video stream CDN - the actual playback
+(\.|^)googlevideo\.com$
+# images / thumbnails / avatars
+(\.|^)ytimg\.com$
+(\.|^)ggpht\.com$
+
+# --- Hulu ---
 (\.|^)hulu\.com$
+
+# --- Spotify (web + app) ---
+(\.|^)spotify\.com$
+(\.|^)spoti\.fi$
+(\.|^)scdn\.co$
+(\.|^)spotifycdn\.com$
+(\.|^)pscdn\.co$
+
+# --- Disney+ (web + app) ---
+(\.|^)disneyplus\.com$
+(\.|^)disney-plus\.net$
+# streaming backend / playback services (used by the app)
+(\.|^)bamgrid\.com$
+(\.|^)dssott\.com$
+(\.|^)dssedge\.com$
+
+# --- Etsy (web + app) ---
+(\.|^)etsy\.com$
+(\.|^)etsy\.me$
+(\.|^)etsystatic\.com$
 
 # --- Shopping ---
 (\.|^)aliexpress\.com$
